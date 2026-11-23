@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>راهنمای نصب و خروجی exe — پروژه‌ی یَدَک (هلدینگ مهر)</title>
+<meta name="description" content="راهنمای کامل و قدم‌به‌قدم نصب Flutter SDK و Visual Studio 2022 با C++ و ساخت خروجی exe ویندوز برای پروژه‌ی یَدَک">
+<style>
+  :root{
+    --bg:#0f172a; --bg2:#111c33; --card:#172033; --card2:#1f2b45;
+    --bd:#2a3a5c; --txt:#e6edf7; --mut:#94a3b8; --acc:#14b8a6; --acc2:#0d9488;
+    --code-bg:#0b1220; --warn:#f59e0b; --ok:#22c55e; --err:#ef4444;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:linear-gradient(180deg,#0b1220 0%,#0f172a 100%);
+    color:var(--txt); font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif;
+    line-height:1.85; font-size:16px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 16px}
+  /* hero */
+  header.hero{
+    background:radial-gradient(120% 120% at 80% 0%,rgba(20,184,166,.18),transparent 60%),
+               linear-gradient(135deg,#0d9488,#0f766e 60%,#134e4a);
+    color:#fff; padding:clamp(28px,7vw,56px) 16px; text-align:center;
+    border-bottom:3px solid var(--acc);
+  }
+  .hero h1{margin:0 0 10px; font-size:clamp(1.5rem,5vw,2.4rem); font-weight:800; line-height:1.3}
+  .hero p{margin:0 auto; max-width:640px; opacity:.92; font-size:clamp(.9rem,2.5vw,1.05rem)}
+  .hero .badges{margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+  .hero .b{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
+    padding:5px 12px; border-radius:999px; font-size:.8rem; backdrop-filter:blur(4px)}
+  /* layout */
+  nav.toc{
+    position:sticky; top:0; z-index:20; background:rgba(15,23,42,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--bd);
+  }
+  nav.toc .wrap{display:flex; gap:6px; overflow-x:auto; padding:10px 16px}
+  nav.toc a{color:var(--mut); text-decoration:none; font-size:.82rem; white-space:nowrap;
+    padding:6px 11px; border-radius:8px; border:1px solid transparent; transition:.15s}
+  nav.toc a:hover{color:var(--txt); background:var(--card); border-color:var(--bd)}
+  main{padding:clamp(20px,4vw,36px) 0 60px}
+  section{background:var(--card); border:1px solid var(--bd); border-radius:var(--radius);
+    padding:clamp(18px,3.5vw,28px); margin-bottom:20px; box-shadow:0 6px 22px rgba(0,0,0,.25)}
+  section h2{margin:0 0 4px; font-size:clamp(1.2rem,3.5vw,1.55rem); color:#fff;
+    display:flex; align-items:center; gap:12px}
+  .num{flex:0 0 auto; width:34px; height:34px; border-radius:10px; background:var(--acc);
+    color:#04201c; font-weight:800; display:grid; place-items:center; font-size:1rem}
+  section h3{margin:22px 0 8px; font-size:1.1rem; color:var(--acc); font-weight:700}
+  p{margin:10px 0}
+  ul,ol{padding-right:22px; margin:10px 0}
+  li{margin:6px 0}
+  a{color:var(--acc); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .note{background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.45);
+    border-radius:10px; padding:12px 14px; margin:14px 0; font-size:.92rem}
+  .note.ok{background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.45)}
+  .note.danger{background:rgba(239,68,68,.1); border-color:rgba(239,68,68,.45)}
+  .note b{color:var(--warn)} .note.ok b{color:var(--ok)} .note.danger b{color:var(--err)}
+  /* code */
+  .code{position:relative; background:var(--code-bg); border:1px solid var(--bd);
+    border-radius:10px; margin:12px 0; overflow:hidden}
+  .code pre{margin:0; padding:14px 16px; overflow-x:auto; font-family:"Fira Code",Consolas,monospace;
+    font-size:.86rem; line-height:1.6; direction:ltr; text-align:left; color:#cdd9e8}
+  .code .copy{position:absolute; top:8px; left:8px; background:var(--card2); color:var(--mut);
+    border:1px solid var(--bd); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:.72rem;
+    font-family:inherit; transition:.15s}
+  .code .copy:hover{color:var(--txt); border-color:var(--acc)}
+  .code .copy.done{color:var(--ok); border-color:var(--ok)}
+  /* table */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--bd); border-radius:10px; margin:14px 0}
+  table{border-collapse:collapse; width:100%; min-width:560px; font-size:.88rem}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--bd); text-align:right; vertical-align:top}
+  th{background:var(--card2); color:var(--acc); font-weight:700; white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(20,184,166,.05)}
+  .pill{display:inline-block; padding:2px 9px; border-radius:999px; font-size:.72rem; font-weight:700}
+  .pill.r{background:rgba(239,68,68,.15); color:#fca5a5}
+  .pill.g{background:rgba(34,197,94,.15); color:#86efac}
+  .pill.y{background:rgba(245,158,11,.15); color:#fcd34d}
+  footer{text-align:center; color:var(--mut); font-size:.82rem; padding:24px 16px 40px; border-top:1px solid var(--bd)}
+  .step-line{counter-reset:s}
+  .kbd{background:var(--card2); border:1px solid var(--bd); border-bottom-width:2px;
+    border-radius:6px; padding:1px 7px; font-size:.82rem; font-family:monospace}
+  @media (max-width:640px){
+    .num{width:28px;height:28px;font-size:.85rem}
+    section{padding:16px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>🖥️ راهنمای نصب و خروجی exe — پروژه‌ی یَدَک</h1>
+  <p>از نصبِ صفرِ Flutter SDK و Visual Studio 2022 تا ساختِ فایلِ اجراییِ ویندوز (exe). قدم‌به‌قدم، با تمام جزئیات.</p>
+  <div class="badges">
+    <span class="b">Flutter SDK</span>
+    <span class="b">Visual Studio 2022 + C++</span>
+    <span class="b">GitHub Pages</span>
+    <span class="b">هلدینگ مهر</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#s1">۱) Flutter SDK</a>
+    <a href="#s2">۲) Visual Studio</a>
+    <a href="#s3">۳) Git</a>
+    <a href="#s4">۴) flutter doctor</a>
+    <a href="#s5">۵) آماده‌سازی پروژه</a>
+    <a href="#s6">۶) عنوان پنجره</a>
+    <a href="#s7">۷) بیلد exe</a>
+    <a href="#s8">۸) خروجی و توزیع</a>
+    <a href="#s9">۹) نصب‌کننده MSIX</a>
+    <a href="#s10">۱۰) عیب‌یابی</a>
+    <a href="#s11">۱۱) آیکون</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="s1">
+  <h2><span class="num">1</span> نصبِ Flutter SDK</h2>
+  <p>فلتر، موتورِ اصلیِ ساختِ اپلیکیشن‌هایcross-platform است. برای خروجیِ exe، فقط به Flutter SDK و کامپایلرِ C++ مایکروسافت نیاز داریم.</p>
+
+  <h3>مراحل</h3>
+  <ol>
+    <li>به صفحه‌ی رسمی نصب برو:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>https://docs.flutter.dev/get-started/install/windows/desktop</pre></div>
+  <ol start="2">
+    <li>دکمه‌ی <b>Download Flutter SDK</b> را بزن. فایلِ <code>flutter_windows_X.X.X-stable.zip</code> دانلود می‌شود.</li>
+    <li>یک پوشه بساز مثلاً <code>C:\src</code> و زیپ را داخلش extract کن. پس از اکسترکت باید این مسیر باشد:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>C:\src\flutter\bin\flutter.bat</pre></div>
+
+  <div class="note danger"><b>⚠️ نکته‌ی مهم:</b> Flutter را در مسیری با فاصله (space) یا کاراکتر فارسی نگذار. پوشه‌هایی مثل <code>Desktop</code> به‌خاطر OneDrive گاهی دردسر می‌سازند. بهترین مسیر: <code>C:\src\flutter</code></div>
+
+  <h3>افزودن به PATH</h3>
+  <ul>
+    <li>منوی استارت → تایپ کن <span class="kbd">env</span> → <b>Edit the system environment variables</b></li>
+    <li>دکمه‌ی <b>Environment Variables…</b> (پایین پنجره)</li>
+    <li>در بخش <b>User variables</b>، متغیر <code>Path</code> را پیدا کن → <b>Edit</b></li>
+    <li>دکمه‌ی <b>New</b> → این مسیر را Paste کن:</li>
+  </ul>
+  <div class="code"><button class="copy">کپی</button><pre>C:\src\flutter\bin</pre></div>
+  <ul>
+    <li>سه OK را بزن تا بسته شود.</li>
+  </ul>
+
+  <h3>تست</h3>
+  <p>یک <b>CMD جدید</b> باز کن (حتماً جدید، تا PATH بارگذاری شود) و بزن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>flutter --version</pre></div>
+  <p>اگر نسخه‌ی فلتر را نشان داد <span class="pill g">✓ نصب درست است</span></p>
+</section>
+
+<section id="s2">
+  <h2><span class="num">2</span> نصبِ Visual Studio 2022 (با C++)</h2>
+  <p>این مهم‌ترین و حجیم‌ترین قسمت است. <b>بدون این، <code>flutter build windows</code> اصلاً اجرا نمی‌شود.</b> فلتر برای ساخت exe به کامپایلر C++ مایکروسافت (MSVC) و CMake نیاز دارد.</p>
+
+  <h3>۲-۱) دانلود Visual Studio Installer</h3>
+  <ol>
+    <li>به این آدرس برو:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>https://visualstudio.microsoft.com/vs/community/</pre></div>
+  <ol start="2">
+    <li>دکمه‌ی <b>Download Visual Studio</b> → نسخه‌ی <b>Community 2022</b> (رایگان). فایلِ <code>VisualStudioSetup.exe</code> دانلود می‌شود.</li>
+    <li>فایل را اجرا کن.</li>
+  </ol>
+
+  <h3>۲-۲) انتخاب Workload (کلیدِ کل ماجرا)</h3>
+  <p>وقتی Installer باز شد، پنجره‌ای با تب‌های <b>Workloads / Individual components / Language packs</b> ظاهر می‌شود. در تب <b>Workloads</b> تیکِ این کارت را بزن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>☑ Desktop development with C++</pre></div>
+  <div class="note"><b>این کارت چه چیزی نصب می‌کند؟</b> با تیک زدنِ آن، خودِ Installer این‌ها را نصب می‌کند (لازم نیست دستی اضافه کنی):
+    <ul>
+      <li><b>MSVC v143</b> — کامپایلر C++ (واجب)</li>
+      <li><b>C++ CMake tools for Windows</b> (واجب)</li>
+      <li><b>Windows SDK</b> یا Windows 11 SDK (واجب)</li>
+      <li>C++ ATL و ابزارهای جانبی</li>
+    </ul>
+  </div>
+
+  <h3>۲-۳) تب Individual components (توصیه)</h3>
+  <p>چک کن حداقل یکی از این‌ها تیک خورده باشد (معمولاً با همان workload خودش می‌آید):</p>
+  <ul>
+    <li><code>Windows 11 SDK (10.0.22621.0)</code> یا <code>Windows 10 SDK</code></li>
+    <li><code>MSVC v143 - VS 2022 C++ x64/x86 build tools (latest)</code></li>
+  </ul>
+
+  <h3>۲-۴) نصب</h3>
+  <ul>
+    <li>مسیر نصب پیش‌فرض <code>C:\Program Files\Microsoft Visual Studio\2022\Community</code> را همان‌طور رها کن.</li>
+    <li>دکمه‌ی <b>Install</b> را بزن.</li>
+    <li>حجم دانلود حدود <b>۶ تا ۹ گیگ</b> است. صبر کن تا تمام شود.</li>
+    <li>وقتی تمام شد، ازت Restart می‌خواهد → بزن.</li>
+  </ul>
+
+  <h3>۲-۵) لایسنس Community</h3>
+  <p>اولین بار که VS باز شود ممکن است بخواهد وارد اکانت مایکروسافت شوی یا لایسنس Community را تأیید کنی. <b>«Continue without code»</b> را بزن کافی است. ما فقط به کامپایلر نیاز داریم، خود VS را باز نمی‌کنیم.</p>
+</section>
+
+<section id="s3">
+  <h2><span class="num">3</span> نصبِ Git (اگر نداری)</h2>
+  <div class="code"><button class="copy">کپی</button><pre>https://git-scm.com/download/win</pre></div>
+  <p>فایل را دانلود و اجرا کن. همه‌ی گزینه‌ها را پیش‌فرض بگذار (همه‌ی Next را بزن). واجب نیست ولی به‌خاطر <code>flutter pub get</code> و آپدیت‌ها مفید است.</p>
+</section>
+
+<section id="s4">
+  <h2><span class="num">4</span> چک نهایی با flutter doctor</h2>
+  <p>CMD یا PowerShell باز کن و بزن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>flutter doctor -v</pre></div>
+  <p>برای خروجی exe فقط این دو خط واجب است که سبز باشند:</p>
+  <div class="code"><button class="copy">کپی</button><pre>[√] Flutter
+[√] Windows development (Visual Studio - develop Windows apps ...)</pre></div>
+  <div class="note danger"><b>اگر نوشت <code>[!] Visual Studio not installed</code>:</b> یعنی workload C++ را درست تیک نزدی. برگرد به بخش ۲-۲ و مطمئن شو <b>Desktop development with C++</b> تیک خورده، سپس Install را بزن.</div>
+  <div class="note ok"><b>اگر نوشت <code>[√] Windows</code> ولی <code>[!] Android Studio</code> یا <code>[!] Chrome</code>:</b> برای exe واجب نیستند، بی‌خیالشان شو.</div>
+</section>
+
+<section id="s5">
+  <h2><span class="num">5</span> آماده‌سازی پروژه‌ی یَدَک</h2>
+  <ol>
+    <li>زیپِ آپدیت‌شده (<code>yadak_full.zip</code>) را extract کن روی مسیر پروژه. اگر قبلاً <code>F:\Dev\yadak</code> هست، محتوا را با <b>overwrite/replace all</b> روی آن کپی کن.</li>
+    <li>CMD باز کن و به پوشه برو:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>F:
+cd \Dev\yadak</pre></div>
+  <ol start="3">
+    <li>وابستگی‌ها را دریافت کن:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>flutter pub get</pre></div>
+  <div class="note"><b>نکته‌ی کلیدی:</b> پروژه فعلاً پوشه‌ی <code>windows\</code> ندارد. پس باید آن را بسازی:</div>
+  <div class="code"><button class="copy">کپی</button><pre>flutter create --platforms=windows .</pre></div>
+  <p>آن نقطه (.) در انتهای دستور را فراموش نکن — یعنی «در همین پوشه». این دستور فایل‌های لازم (<code>windows\runner\</code>، CMake و…) را می‌سازد و <b>به کدهای Dart تو دست نمی‌زند</b>.</p>
+</section>
+
+<section id="s6">
+  <h2><span class="num">6</span> تنظیم عنوان پنجره (تیتل)</h2>
+  <h3>۶-۱) عنوان نوار پنجره</h3>
+  <p>با Notepad یا VS Code این فایل را باز کن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak\windows\runner\main.cpp</pre></div>
+  <p>خطی شبیه این را پیدا کن و <code>"yadak_app"</code> را تغییر بده:</p>
+  <div class="code"><button class="copy">کپی</button><pre>if (!window.Create(L"مهر هلدینگ — مدیریت انبار", origin, size)) {</pre></div>
+
+  <h3>۶-۲) نام محصول در مشخصات فایل</h3>
+  <p>این فایل را باز کن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak\windows\runner\Runner.rc</pre></div>
+  <div class="code"><button class="copy">کپی</button><pre>VALUE "ProductName", "مهر هلدینگ" "\0"</pre></div>
+</section>
+
+<section id="s7">
+  <h2><span class="num">7</span> بیلد exe نهایی</h2>
+  <p>در همان CMD (درون پوشه پروژه) بزن:</p>
+  <div class="code"><button class="copy">کپی</button><pre>flutter build windows --release</pre></div>
+  <div class="note"><b>اولین بار</b> ممکن است ۳ تا ۸ دقیقه طول بکشد (CMake اولین بار همه‌چی را کش می‌سازد). دفعات بعد سریع‌تر است. اگر بدون خطا تمام شد <span class="pill g">✓ exe ساخته شد</span></div>
+</section>
+
+<section id="s8">
+  <h2><span class="num">8</span> خروجی کجاست و چطور پخشش کنی</h2>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak\build\windows\x64\runner\Release\</pre></div>
+  <p>در این پوشه:</p>
+  <ul>
+    <li><code>yadak_app.exe</code> — فایل اجرایی اصلی</li>
+    <li><code>flutter_windows.dll</code> — کتابخانه فلتر (لازم)</li>
+    <li><code>data\</code> — پوشه دارایی‌ها (لازم)</li>
+  </ul>
+  <div class="note danger"><b>⚠️ بسیار مهم:</b> فقط <code>yadak_app.exe</code> را کپی نکن! بدون <code>flutter_windows.dll</code> و <code>data\</code> اجرا نمی‌شود. <b>کل محتوای پوشه Release</b> را کپی/Zip کن و ببر روی دستگاه مقصد.</div>
+  <p>می‌توانی نام <code>yadak_app.exe</code> را به مثلاً <code>MehreHolding.exe</code> تغییر دهی — به‌شرطی که dll و data کنارش بمانند.</p>
+</section>
+
+<section id="s9">
+  <h2><span class="num">9</span> نصب‌کننده MSIX (اختیاری)</h2>
+  <p>اگر یک فایل نصب‌کننده (<code>.msix</code>) می‌خواهی که با دابل‌کلیک نصب شود:</p>
+  <div class="code"><button class="copy">کپی</button><pre>flutter pub add dev:msix
+flutter pub run msix:create</pre></div>
+  <p>خروجی:</p>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak\build\windows\x64\runner\Release\yadak_app.msix</pre></div>
+</section>
+
+<section id="s10">
+  <h2><span class="num">10</span> عیب‌یابیِ رایج</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>خطا</th><th>علت</th><th>راه‌حل</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill r">Visual Studio not installed</span></td><td>workload C++ تیک نخورده</td><td>بخش ۲-۲: تیک <b>Desktop development with C++</b></td></tr>
+      <tr><td><span class="pill r">cmake not found</span></td><td>CMake نصب نیست</td><td>در workload C++، <b>C++ CMake tools</b> هم تیک می‌خورد؛ دوباره <code>flutter doctor</code></td></tr>
+      <tr><td><span class="pill r">MSVC v143 not found</span></td><td>فقط Build Tools نصب است نه کامل</td><td>workload کامل C++ را نصب کن</td></tr>
+      <tr><td><span class="pill y">exe اجرا می‌شود ولی صفحه سفید</span></td><td>نسخه فلتر قدیمی</td><td><code>flutter upgrade</code> سپس <code>flutter clean</code> و بیلد مجدد</td></tr>
+      <tr><td><span class="pill y">خطای permission</span></td><td>آنتی‌ویروس</td><td>مسیر Release را در آنتی‌ویروس exempt کن</td></tr>
+      <tr><td><span class="pill y">هشدارهای file_picker</span></td><td>ورژن قدیمی پلاگین</td><td>در pubspec: <code>file_picker: ^8.1.2</code> سپس <code>flutter pub get</code> (در نسخه‌ی آپدیت‌شده انجام شده)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="s11">
+  <h2><span class="num">11</span> تغییر آیکون (اختیاری)</h2>
+  <ol>
+    <li>یک آیکون <code>256×256</code> با نام <code>app_icon.ico</code> بساز.</li>
+    <li>جایگزین کن با:</li>
+  </ol>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak\windows\runner\resources\app_icon.ico</pre></div>
+  <ol start="3">
+    <li>دوباره <code>flutter build windows --release</code>.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>🚀 خلاصه‌ی یک‌خطی</h2>
+  <p>وقتی همه‌چی نصب است:</p>
+  <div class="code"><button class="copy">کپی</button><pre>F:\Dev\yadak&gt; flutter create --platforms=windows .
+F:\Dev\yadak&gt; flutter pub get
+F:\Dev\yadak&gt; flutter build windows --release</pre></div>
+  <p>خروجی در: <code>build\windows\x64\runner\Release\yadak_app.exe</code></p>
+  <div class="note ok"><b>از همه مهم‌تر:</b> بخش ۲ (Visual Studio با C++) است — ۹۰٪ مواقع آدم‌ها همانجا گیر می‌کنند چون فقط <code>flutter doctor</code> می‌زنند و <code>[!] Visual Studio not installed</code> می‌بینند. workload <b>Desktop development with C++</b> را حتماً تیک بزن.</div>
+</section>
+
+</main>
+
+<footer>
+  راهنمای پروژه‌ی یَدَک — هلدینگ مهر · منتشرشده روی GitHub Pages ·
+  <a href="https://github.com/amiraliSite" target="_blank" rel="noopener">github.com/amiraliSite</a>
+</footer>
+
+<script>
+  // کپیِ کد با کلیک
+  document.querySelectorAll('.code .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var txt = pre.innerText;
+      navigator.clipboard.writeText(txt).then(function(){
+        btn.classList.add('done'); btn.textContent='✓ کپی شد';
+        setTimeout(function(){ btn.classList.remove('done'); btn.textContent='کپی'; },1600);
+      });
+    });
+  });
+  // فعال‌کردنِ لینکِ فعال در TOC
+  var links=[].slice.call(document.querySelectorAll('nav.toc a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function onScroll(){
+    var y=window.scrollY+120, cur=secs[0];
+    secs.forEach(function(s){ if(s && s.offsetTop<=y) cur=s; });
+    links.forEach(function(a){a.style.color=''; a.style.background='';});
+    if(cur){ var a=document.querySelector('nav.toc a[href="#'+cur.id+'"]'); if(a){a.style.color='var(--acc)';a.style.background='var(--card)';a.style.borderColor='var(--bd)';} }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+</script>
+</body>
+</html>
