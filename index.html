@@ -19,6 +19,11 @@
     color:var(--txt); font-family:"Vazirmatn","Segoe UI",Tahoma,sans-serif;
     line-height:1.85; font-size:16px; -webkit-font-smoothing:antialiased;
   }
+  /* جلوگیری از سرریزِ افقی: شکستِ رشته‌های طولانی (URL/مسیر) در متنِ معمولی */
+  p, li, a, code, .note, td, th{ overflow-wrap:anywhere; word-break:break-word; }
+  /* بلوک‌های کد: حفظِ اسکرولِ افقی (شکستِ کلمه نادیده) */
+  pre{ overflow-wrap:normal; word-break:normal; max-width:100%; }
+  .code, .tbl-wrap, nav.toc .wrap{ max-width:100%; }
   .wrap{max-width:1080px; margin:0 auto; padding:0 16px}
   /* hero */
   header.hero{
